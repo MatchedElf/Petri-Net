@@ -1,5 +1,10 @@
 // petrinetscene.cpp
 #include "petrinetscene.h"
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include<QLineEdit>
+#include<QPushButton>
 
 PetriNetScene::PetriNetScene(QObject *parent)
     : QGraphicsScene(parent),
@@ -52,11 +57,22 @@ void PetriNetScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 m_tempArcStartTransition = transition;
                 m_tempArcStartPlace = nullptr;
             }
+            //QLineF tmpLine = QLineF(m_tempArcStartPlace ? m_tempArcStartPlace->pos() : m_tempArcStartTransition->pos(), event->scenePos());
+            tempLine = new QGraphicsLineItem();
+            tempLine->setPen(QPen(Qt::gray, 2, Qt::DashLine));
+            addItem(tempLine);
             break;
         default:
             QGraphicsScene::mousePressEvent(event);
         }
-    } else {
+    }
+    else if(event->button() == Qt::RightButton)
+    {
+        QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
+        showContextMenu(event->screenPos(), item);
+
+    }
+    else {
         QGraphicsScene::mousePressEvent(event);
     }
 }
@@ -64,7 +80,9 @@ void PetriNetScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void PetriNetScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton && m_currentTool == ToolArc) {
+        QList<QGraphicsItem*> tmp = items(event->scenePos());
         QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
+        removeItem(tempLine);
 
         if (m_tempArcStartPlace && dynamic_cast<PetriTransition*>(item)) {
             // Создаем дугу от Place к Transition
@@ -77,6 +95,8 @@ void PetriNetScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         m_tempArcStartPlace = nullptr;
         m_tempArcStartTransition = nullptr;
+        tempLine = nullptr;
+        update();
     }
     QGraphicsScene::mouseReleaseEvent(event);
 }
@@ -87,11 +107,9 @@ void PetriNetScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         (m_tempArcStartPlace || m_tempArcStartTransition)) {
         // Отрисовка временной линии
         QLineF tmpLine = QLineF(m_tempArcStartPlace ? m_tempArcStartPlace->pos() : m_tempArcStartTransition->pos(), event->scenePos());
-        QGraphicsLineItem* tempLine = new QGraphicsLineItem(tmpLine);
-        tempLine->setPen(QPen(Qt::gray, 2, Qt::DashLine));
-        addItem(tempLine);
-        update();
-        delete tempLine;
+        tmpLine.setP2(QPointF(tmpLine.p2().x() - 5, tmpLine.p2().y() - 5));
+        tempLine->setLine(tmpLine);
+        qDebug() << event->scenePos() << QPointF(tmpLine.p1().x() - 5, tmpLine.p1().y() - 5);
     }
     update();
     QGraphicsScene::mouseMoveEvent(event);
@@ -120,7 +138,40 @@ void PetriNetScene::addArc(PetriPlace *place, PetriTransition *transition, bool 
 
     PetriArc *arc = new PetriArc(place, transition, isInhibitor, weight);
     addItem(arc);
+    place->setParentItem(place);
     emit arcAdded(arc);
+}
+
+void PetriNetScene::showContextMenu(const QPointF &pos, QGraphicsItem* item)
+{
+    if(!item)
+        return;
+    QMenu contextMenu;
+
+    // Создаем действия меню
+    QAction *action1 = contextMenu.addAction("Удалить");
+    QAction *action2;
+    PetriPlace* place = dynamic_cast<PetriPlace*>(item);
+    if (place)
+    {
+        action2 = contextMenu.addAction("Изменить количество фишек");
+        connect(action2, &QAction::triggered, this, [place, this](){
+            onTokensEdit(place);
+        });
+    }
+    contextMenu.addSeparator();
+    QAction *action3 = contextMenu.addAction("Выход");
+
+    // Подключаем действия к слотам
+    connect(action1, &QAction::triggered, this, [item, this](){
+        removeItem(item);
+        update();
+    });
+    // connect(action3, &QAction::triggered, qApp, &QApplication::quit);
+
+    // Показываем меню
+    contextMenu.exec(pos.toPoint());
+
 }
 
 void PetriNetScene::setCurrentTool(Tool tool)
@@ -139,4 +190,44 @@ void PetriNetScene::setCurrentTool(Tool tool)
     //     setCursor(QPixmap(":/icons/transition_cursor.png"));
     //     break;
     // }
+}
+
+void PetriNetScene::onTokensEdit(PetriPlace* item)
+{
+    QDialog dialog;
+    dialog.setWindowTitle("Ввод данных");
+    dialog.resize(100, 70);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+
+    // Поле для целых чисел
+    QLabel *intLabel = new QLabel("Количество фишек для " + item->label() + ": ");
+    QLineEdit *intEdit = new QLineEdit();
+    QIntValidator* intVld = new QIntValidator(intEdit);
+    intVld->setRange(0, 10);
+    intEdit->setValidator(intVld);
+    intEdit->setText(QString::number(item->tokens()));
+    mainLayout->addWidget(intLabel);
+    mainLayout->addWidget(intEdit);
+
+
+    // Кнопки
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *okButton = new QPushButton("OK");
+    QPushButton *cancelButton = new QPushButton("Отмена");
+    buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
+    mainLayout->addLayout(buttonLayout);
+
+    // Обработчики
+    QObject::connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    QObject::connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    // Показываем диалог
+    if (dialog.exec() == QDialog::Accepted) {
+        int newTokens = intEdit->text().toInt();
+        item->setTokens(newTokens);
+        update();
+    }
+
 }

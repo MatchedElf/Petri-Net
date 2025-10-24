@@ -38,6 +38,8 @@ public:
     void addTransition(const QPointF &pos);
     void addArc(PetriPlace *place, PetriTransition *transition, bool isInhibitor, int weight);
 
+    void showContextMenu(const QPointF &pos, QGraphicsItem* item);
+
     void setCurrentTool(Tool tool);
 
     bool m_gridVisible;
@@ -48,7 +50,12 @@ public:
     PetriPlace* m_tempArcStartPlace{nullptr};
     PetriTransition* m_tempArcStartTransition{nullptr};
 
+    QGraphicsLineItem* tempLine;
+
     int placesCount{0};
+
+protected slots:
+    void onTokensEdit(PetriPlace* item);
 
 signals:
     void transitionAdded(PetriTransition* transition);

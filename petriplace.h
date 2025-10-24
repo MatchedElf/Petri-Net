@@ -15,14 +15,19 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
     void setTokens(int count);
+    int tokens() const;
+
+    QString label() const;
+
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
 
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
 signals:
     void positionChanged();
 private:
-    QString m_label;
+    QString m_label{""};
     int m_tokens{0};
     bool m_queueMode{false};
 

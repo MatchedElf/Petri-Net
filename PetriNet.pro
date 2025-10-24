@@ -11,7 +11,6 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    mainwindow2.cpp \
     petriarc.cpp \
     petrinetscene.cpp \
     petriplace.cpp \
@@ -19,7 +18,6 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
-    mainwindow2.h \
     petriarc.h \
     petrinetscene.h \
     petriplace.h \
@@ -30,5 +28,4 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-FORMS += \
-    mainwindow2.ui
+FORMS +=

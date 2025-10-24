@@ -54,6 +54,16 @@ void PetriPlace::setTokens(int count)
     update();
 }
 
+int PetriPlace::tokens() const
+{
+    return m_tokens;
+}
+
+QString PetriPlace::label() const
+{
+    return m_label;
+}
+
 QVariant PetriPlace::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
