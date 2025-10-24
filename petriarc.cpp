@@ -96,6 +96,6 @@ QPointF PetriArc::calculateIntersection(const QPointF &point1, const QPointF &po
             return intersectPoint;
         }
     }
-
+//
     return point2;
 }
