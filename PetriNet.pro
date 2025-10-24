@@ -11,17 +11,17 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    petriarc.cpp \
-    petrinetscene.cpp \
-    petriplace.cpp \
-    petritransition.cpp
+    Scene/Items/petriarc.cpp \
+    Scene/petrinetscene.cpp \
+    Scene/Items/petriplace.cpp \
+    Scene/Items/petritransition.cpp
 
 HEADERS += \
     mainwindow.h \
-    petriarc.h \
-    petrinetscene.h \
-    petriplace.h \
-    petritransition.h
+    Scene/Items/petriarc.h \
+    Scene/petrinetscene.h \
+    Scene/Items/petriplace.h \
+    Scene/Items/petritransition.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
