@@ -1,10 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "petriplace.h"
-#include "petritransition.h"
-#include "petriarc.h"
-#include "petrinetscene.h"
+#include "Scene/Items/petriplace.h"
+#include "Scene/Items/petritransition.h"
+#include "Scene/Items/petriarc.h"
+#include "Scene/petrinetscene.h"
 
 #include <QMainWindow>
 #include <QToolBar>

@@ -11,9 +11,9 @@
 #include <QTreeWidget>
 #include <QActionGroup>
 
-#include "petriplace.h"
-#include "petritransition.h"
-#include "petriarc.h"
+#include "Items/petriplace.h"
+#include "Items/petritransition.h"
+#include "Items/petriarc.h"
 
 class PetriNetScene : public QGraphicsScene
 {
