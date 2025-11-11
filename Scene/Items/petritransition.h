@@ -8,6 +8,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QDebug>
+#include "petriplace.h"
+
 class PetriTransition : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
@@ -16,14 +18,16 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-
-    int m_firingTime{0};
-    int m_priority{0};
-    QString m_label;
-
-    QPair<int, int> m_timeInterval {0, 0};
+    void addPlace(PetriPlace*);
 signals:
     void positionChanged();
+
+private:
+    int m_firingTime{0};
+    int m_priority{0};
+    QPair<int, int> m_timeInterval {0, 0};
+    QString m_label;
+    QList<PetriPlace*> _placesList;
 };
 
 #endif // PETRITRANSITION_H

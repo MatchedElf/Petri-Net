@@ -67,7 +67,6 @@ void PetriArc::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     painter->setBrush(pen().color());
     painter->drawPolygon(QPolygonF() << intersectEnd << arrowP1 << arrowP2);
-
     // Рисуем вес если > 1
     if (m_weight > 1) {
         painter->setFont(QFont("Arial", 8));
@@ -76,7 +75,7 @@ void PetriArc::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     }
 }
 
-QPointF PetriArc::calculateIntersection(const QPointF &point1, const QPointF &point2, QGraphicsItem *item)
+QPointF PetriArc::calculateIntersection(const QPointF &point1, const QPointF &point2, const QGraphicsItem *item)
 {
     // Упрощенный расчет пересечения с границей элемента
     QRectF rect = item->boundingRect();

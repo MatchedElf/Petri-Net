@@ -49,3 +49,8 @@ QVariant PetriTransition::itemChange(GraphicsItemChange change, const QVariant &
     }
     return QGraphicsRectItem::itemChange(change, value);
 }
+
+void PetriTransition::addPlace(PetriPlace * place)
+{
+    _placesList.append(place);
+}

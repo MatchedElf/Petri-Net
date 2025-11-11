@@ -109,7 +109,7 @@ void PetriNetScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QLineF tmpLine = QLineF(m_tempArcStartPlace ? m_tempArcStartPlace->pos() : m_tempArcStartTransition->pos(), event->scenePos());
         tmpLine.setP2(QPointF(tmpLine.p2().x() - 5, tmpLine.p2().y() - 5));
         tempLine->setLine(tmpLine);
-        qDebug() << event->scenePos() << QPointF(tmpLine.p1().x() - 5, tmpLine.p1().y() - 5);
+        //qDebug() << event->scenePos() << QPointF(tmpLine.p1().x() - 5, tmpLine.p1().y() - 5);
     }
     update();
     QGraphicsScene::mouseMoveEvent(event);
@@ -132,11 +132,13 @@ void PetriNetScene::addTransition(const QPointF &pos)
     emit transitionAdded(transition);
 }
 
-void PetriNetScene::addArc(PetriPlace *place, PetriTransition *transition, bool isInhibitor, int weight)
+void PetriNetScene::addArc(PetriPlace *place, PetriTransition *transition, bool fromPlace, int weight)
 {
     if (!place || !transition) return;
 
-    PetriArc *arc = new PetriArc(place, transition, isInhibitor, weight);
+    PetriArc *arc = new PetriArc(place, transition, fromPlace, weight);
+    if(fromPlace)
+        transition->addPlace(place);
     addItem(arc);
     place->setParentItem(place);
     emit arcAdded(arc);
@@ -155,6 +157,14 @@ void PetriNetScene::showContextMenu(const QPointF &pos, QGraphicsItem* item)
     if (place)
     {
         action2 = contextMenu.addAction("Изменить количество фишек");
+        connect(action2, &QAction::triggered, this, [place, this](){
+            onTokensEdit(place);
+        });
+    }
+    PetriArc* arc = dynamic_cast<PetriArc*>(item);
+    if (arc)
+    {
+        action2 = contextMenu.addAction("Изменить количество стрелок");
         connect(action2, &QAction::triggered, this, [place, this](){
             onTokensEdit(place);
         });

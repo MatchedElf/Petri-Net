@@ -11,6 +11,7 @@
 #include "petriplace.h"
 #include "petritransition.h"
 
+
 class PetriArc : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
@@ -19,14 +20,17 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-    QPointF calculateIntersection(const QPointF &point1, const QPointF &point2, QGraphicsItem *item);
 
-    PetriPlace* m_place;
-    PetriTransition* m_transition;
-    bool _fromPlace;
-    int m_weight;
 public slots:
     void updatePosition();
+
+private:
+    QPointF calculateIntersection(const QPointF &point1, const QPointF &point2, const QGraphicsItem *item);
+
+    const PetriPlace* m_place;
+    const PetriTransition* m_transition;
+    bool _fromPlace;
+    int m_weight;
 
 };
 
