@@ -137,8 +137,7 @@ void PetriNetScene::addArc(PetriPlace *place, PetriTransition *transition, bool 
     if (!place || !transition) return;
 
     PetriArc *arc = new PetriArc(place, transition, fromPlace, weight);
-    if(fromPlace)
-        transition->addPlace(place);
+    transition->addPlace(place, fromPlace);
     addItem(arc);
     place->setParentItem(place);
     emit arcAdded(arc);
@@ -164,6 +163,8 @@ void PetriNetScene::showContextMenu(const QPointF &pos, QGraphicsItem* item)
     PetriArc* arc = dynamic_cast<PetriArc*>(item);
     if (arc)
     {
+        //TODO
+        //Сделать аналогично изменению фишек(tokens) у мест(place) изменение веса(weight) у стрелок(arc)
         action2 = contextMenu.addAction("Изменить количество стрелок");
         connect(action2, &QAction::triggered, this, [place, this](){
             onTokensEdit(place);

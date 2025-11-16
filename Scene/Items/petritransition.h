@@ -18,7 +18,7 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-    void addPlace(PetriPlace*);
+    void addPlace(PetriPlace*, bool from);
 signals:
     void positionChanged();
 
@@ -27,7 +27,9 @@ private:
     int m_priority{0};
     QPair<int, int> m_timeInterval {0, 0};
     QString m_label;
-    QList<PetriPlace*> _placesList;
+
+    QList<PetriPlace*> _fromPlacesList;
+    QList<PetriPlace*> _toPlacesList;
 };
 
 #endif // PETRITRANSITION_H

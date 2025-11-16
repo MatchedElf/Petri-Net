@@ -50,7 +50,10 @@ QVariant PetriTransition::itemChange(GraphicsItemChange change, const QVariant &
     return QGraphicsRectItem::itemChange(change, value);
 }
 
-void PetriTransition::addPlace(PetriPlace * place)
+void PetriTransition::addPlace(PetriPlace * place, bool from)
 {
-    _placesList.append(place);
+    if(from)
+        _fromPlacesList.append(place);
+    else
+        _toPlacesList.append(place);
 }
