@@ -11,7 +11,7 @@
 #include "petriplace.h"
 #include "petritransition.h"
 
-
+//test
 class PetriArc : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
