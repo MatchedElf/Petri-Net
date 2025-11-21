@@ -1,4 +1,5 @@
 // petriplace.cpp
+
 #include "petriplace.h"
 #include "qpainter.h"
 
@@ -15,6 +16,7 @@ PetriPlace::PetriPlace(QGraphicsItem *parent, QString label)
     setBrush(Qt::white);
     setPen(QPen(Qt::black, 2));
 }
+
 
 void PetriPlace::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {

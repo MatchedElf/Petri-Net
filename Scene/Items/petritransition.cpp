@@ -1,4 +1,5 @@
 // petritransition.cpp
+
 #include "petritransition.h"
 #include "qpainter.h"
 
@@ -15,6 +16,7 @@ PetriTransition::PetriTransition(QGraphicsItem *parent)
     setBrush(Qt::black);
     setPen(QPen(Qt::black, 2));
 }
+
 
 void PetriTransition::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -42,6 +44,7 @@ void PetriTransition::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     painter->drawText(labelRect, Qt::AlignCenter, m_label);
 }
 
+
 QVariant PetriTransition::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
@@ -49,6 +52,8 @@ QVariant PetriTransition::itemChange(GraphicsItemChange change, const QVariant &
     }
     return QGraphicsRectItem::itemChange(change, value);
 }
+
+
 
 void PetriTransition::addPlace(PetriPlace * place, bool from)
 {
