@@ -1,3 +1,5 @@
 build/
 *.pro.user
 .vs/*
+Doxyfile
+docs/

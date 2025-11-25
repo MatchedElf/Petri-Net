@@ -52,6 +52,11 @@ public:
     */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
+    const PetriPlace* getPlace();
+
+    const PetriTransition* getTransition();
+
+    bool isFromPlace();
 
 public slots:
     /**
@@ -76,10 +81,10 @@ private:
     */
     QPointF calculateIntersection(const QPointF &point1, const QPointF &point2, const QGraphicsItem *item);
 
-    const PetriPlace* m_place;
-    const PetriTransition* m_transition;
+    const PetriPlace* _place;
+    const PetriTransition* _transition;
     bool _fromPlace;
-    int m_weight;
+    int _weight;
 
 };
 

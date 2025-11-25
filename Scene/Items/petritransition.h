@@ -75,10 +75,10 @@ signals:
     void positionChanged();
 
 private:
-    int m_firingTime{ 0 };                   ///< Время срабатывания перехода
-    int m_priority{ 0 };                     ///< Приоритет перехода
-    QPair<int, int> m_timeInterval{ 0, 0 };  ///< Временной интервал срабатывания
-    QString m_label;                         ///< Текстовая метка перехода
+    int _firingTime{ 0 };                   ///< Время срабатывания перехода
+    int _priority{ 0 };                     ///< Приоритет перехода
+    QPair<int, int> _timeInterval{ 0, 0 };  ///< Временной интервал срабатывания
+    QString _label;                         ///< Текстовая метка перехода
 
     QList<PetriPlace*> _fromPlacesList;      ///< Список входных позиций (источники фишек)
     QList<PetriPlace*> _toPlacesList;        ///< Список выходных позиций (приемники фишек)

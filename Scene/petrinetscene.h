@@ -55,7 +55,7 @@ public:
      *
      * @param parent Родительский объект
      */
-    explicit PetriNetScene(QObject *parent = nullptr);
+    PetriNetScene(QObject *parent = nullptr);
 
     /**
      * @brief Отрисовка фона сцены с сеткой
@@ -163,13 +163,13 @@ public:
      */
     void setCurrentTool(Tool tool);
 
-    bool m_gridVisible;
-    int m_gridSize;
-    QColor m_gridColor{Qt::lightGray};
-    Tool m_currentTool{ToolSelect};
+    bool _gridVisible;
+    int _gridSize;
+    QColor _gridColor{Qt::lightGray};
+    Tool _currentTool{ToolSelect};
 
-    PetriPlace* m_tempArcStartPlace{nullptr};
-    PetriTransition* m_tempArcStartTransition{nullptr};
+    PetriPlace* _tempArcStartPlace{nullptr};
+    PetriTransition* _tempArcStartTransition{nullptr};
 
     QGraphicsLineItem* tempLine;
 

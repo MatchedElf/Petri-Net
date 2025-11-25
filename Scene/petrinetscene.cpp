@@ -8,10 +8,10 @@
 
 PetriNetScene::PetriNetScene(QObject *parent)
     : QGraphicsScene(parent),
-    m_gridVisible(true),
-    m_gridSize(20),
-    m_gridColor(Qt::lightGray),
-    m_currentTool(Tool::ToolSelect)
+    _gridVisible(true),
+    _gridSize(20),
+    _gridColor(Qt::lightGray),
+    _currentTool(Tool::ToolSelect)
 {
     // Настройка сцены
     setSceneRect(-1000, -1000, 2000, 2000);
@@ -21,17 +21,17 @@ void PetriNetScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
     QGraphicsScene::drawBackground(painter, rect);
 
-    if (m_gridVisible) {
-        painter->setPen(QPen(m_gridColor, 1));
+    if (_gridVisible) {
+        painter->setPen(QPen(_gridColor, 1));
 
-        qreal left = int(rect.left()) - (int(rect.left()) % m_gridSize);
-        qreal top = int(rect.top()) - (int(rect.top()) % m_gridSize);
+        qreal left = int(rect.left()) - (int(rect.left()) % _gridSize);
+        qreal top = int(rect.top()) - (int(rect.top()) % _gridSize);
 
-        for (qreal x = left; x < rect.right(); x += m_gridSize) {
+        for (qreal x = left; x < rect.right(); x += _gridSize) {
             painter->drawLine(x, rect.top(), x, rect.bottom());
         }
 
-        for (qreal y = top; y < rect.bottom(); y += m_gridSize) {
+        for (qreal y = top; y < rect.bottom(); y += _gridSize) {
             painter->drawLine(rect.left(), y, rect.right(), y);
         }
     }
@@ -41,7 +41,7 @@ void PetriNetScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
         QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
-        switch (m_currentTool) {
+        switch (_currentTool) {
         case ToolPlace:
             addPlace(event->scenePos());
             break;
@@ -50,14 +50,14 @@ void PetriNetScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             break;
         case ToolArc:
             if (PetriPlace* place = dynamic_cast<PetriPlace*>(item)) {
-                m_tempArcStartPlace = place;
-                m_tempArcStartTransition = nullptr;
+                _tempArcStartPlace = place;
+                _tempArcStartTransition = nullptr;
             }
             else if (PetriTransition* transition = dynamic_cast<PetriTransition*>(item)) {
-                m_tempArcStartTransition = transition;
-                m_tempArcStartPlace = nullptr;
+                _tempArcStartTransition = transition;
+                _tempArcStartPlace = nullptr;
             }
-            //QLineF tmpLine = QLineF(m_tempArcStartPlace ? m_tempArcStartPlace->pos() : m_tempArcStartTransition->pos(), event->scenePos());
+            //QLineF tmpLine = QLineF(_tempArcStartPlace ? _tempArcStartPlace->pos() : _tempArcStartTransition->pos(), event->scenePos());
             tempLine = new QGraphicsLineItem();
             tempLine->setPen(QPen(Qt::gray, 2, Qt::DashLine));
             addItem(tempLine);
@@ -79,22 +79,22 @@ void PetriNetScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void PetriNetScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton && m_currentTool == ToolArc) {
+    if (event->button() == Qt::LeftButton && _currentTool == ToolArc) {
         QList<QGraphicsItem*> tmp = items(event->scenePos());
         QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
         removeItem(tempLine);
 
-        if (m_tempArcStartPlace && dynamic_cast<PetriTransition*>(item)) {
+        if (_tempArcStartPlace && dynamic_cast<PetriTransition*>(item)) {
             // Создаем дугу от Place к Transition
-            addArc(m_tempArcStartPlace, static_cast<PetriTransition*>(item), true, 1);
+            addArc(_tempArcStartPlace, static_cast<PetriTransition*>(item), true, 1);
         }
-        else if (m_tempArcStartTransition && dynamic_cast<PetriPlace*>(item)) {
+        else if (_tempArcStartTransition && dynamic_cast<PetriPlace*>(item)) {
             // Создаем дугу от Transition к Place
-            addArc(static_cast<PetriPlace*>(item), m_tempArcStartTransition, false, 1);
+            addArc(static_cast<PetriPlace*>(item), _tempArcStartTransition, false, 1);
         }
 
-        m_tempArcStartPlace = nullptr;
-        m_tempArcStartTransition = nullptr;
+        _tempArcStartPlace = nullptr;
+        _tempArcStartTransition = nullptr;
         tempLine = nullptr;
         update();
     }
@@ -103,10 +103,10 @@ void PetriNetScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void PetriNetScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_currentTool == ToolArc &&
-        (m_tempArcStartPlace || m_tempArcStartTransition)) {
+    if (_currentTool == ToolArc &&
+        (_tempArcStartPlace || _tempArcStartTransition)) {
         // Отрисовка временной линии
-        QLineF tmpLine = QLineF(m_tempArcStartPlace ? m_tempArcStartPlace->pos() : m_tempArcStartTransition->pos(), event->scenePos());
+        QLineF tmpLine = QLineF(_tempArcStartPlace ? _tempArcStartPlace->pos() : _tempArcStartTransition->pos(), event->scenePos());
         tmpLine.setP2(QPointF(tmpLine.p2().x() - 5, tmpLine.p2().y() - 5));
         tempLine->setLine(tmpLine);
         //qDebug() << event->scenePos() << QPointF(tmpLine.p1().x() - 5, tmpLine.p1().y() - 5);
@@ -139,7 +139,7 @@ void PetriNetScene::addArc(PetriPlace *place, PetriTransition *transition, bool 
     PetriArc *arc = new PetriArc(place, transition, fromPlace, weight);
     transition->addPlace(place, fromPlace);
     addItem(arc);
-    place->setParentItem(place);
+    //place->setParentItem(place);
     emit arcAdded(arc);
 }
 
@@ -187,7 +187,7 @@ void PetriNetScene::showContextMenu(const QPointF &pos, QGraphicsItem* item)
 
 void PetriNetScene::setCurrentTool(Tool tool)
 {
-    m_currentTool = tool;
+    _currentTool = tool;
 
     // Обновляем курсор
     // switch (tool) {

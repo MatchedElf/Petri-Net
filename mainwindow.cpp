@@ -1,6 +1,6 @@
 // mainwindow.cpp
 #include "mainwindow.h"
-
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,14 +10,15 @@ MainWindow::MainWindow(QWidget *parent)
     resize(1024, 768);
 
     // Создание сцены
-    m_scene = new PetriNetScene(this);
-    connect(m_scene, &PetriNetScene::placeAdded, this, &MainWindow::onPlaceAdded);
-    connect(m_scene, &PetriNetScene::transitionAdded, this, &MainWindow::onTransitionAdded);
-    connect(m_scene, &PetriNetScene::arcAdded, this, &MainWindow::onArcAdded);
+    _scene = new PetriNetScene(this);
+    //connect(_scene, &PetriNetScene::placeAdded, this, &MainWindow::onPlaceAdded);
+    //connect(_scene, &PetriNetScene::transitionAdded, this, &MainWindow::onTransitionAdded);
+    connect(_scene, &PetriNetScene::arcAdded, this, &MainWindow::onArcAdded);
 
+    _simScene = new PetriNetScene(this);
     // Создание представления
-    m_view = new QGraphicsView(m_scene, this);
-    setCentralWidget(m_view);
+    _view = new QGraphicsView(_scene, this);
+    setCentralWidget(_view);
 
     // Создание панели инструментов
     createToolBar();
@@ -40,24 +41,25 @@ MainWindow::~MainWindow()
 void MainWindow::createToolBar()
 {
     QToolBar *toolBar = addToolBar("Tools");
+    QString iconsDir = QString(PROJECT_PATH) + "icons/";
 
-    QAction *selectAction = new QAction(QIcon(":/icons/select.png"), "Select", this);
+    QAction *selectAction = new QAction(QIcon(iconsDir + "Image2.png"), "Select", this);
     selectAction->setCheckable(true);
     selectAction->setChecked(true);
-    connect(selectAction, &QAction::triggered, [this]() { m_scene->setCurrentTool(PetriNetScene::ToolSelect); });
+    connect(selectAction, &QAction::triggered, [this]() { _scene->setCurrentTool(PetriNetScene::ToolSelect); });
 
     QAction *placeAction = new QAction(QIcon(":/icons/place.png"), "Place", this);
     placeAction->setCheckable(true);
-    connect(placeAction, &QAction::triggered, [this]() { m_scene->setCurrentTool(PetriNetScene::ToolPlace); });
+    connect(placeAction, &QAction::triggered, [this]() { _scene->setCurrentTool(PetriNetScene::ToolPlace); });
 
     QAction *transitionAction = new QAction(QIcon(":/icons/transition.png"), "Transition", this);
     transitionAction->setCheckable(true);
-    connect(transitionAction, &QAction::triggered, [this]() { m_scene->setCurrentTool(PetriNetScene::ToolTransition); });
+    connect(transitionAction, &QAction::triggered, [this]() { _scene->setCurrentTool(PetriNetScene::ToolTransition); });
 
     QAction* arcAction = new QAction(QIcon(":/icons/arc.png"), "Arc", this);
     arcAction->setCheckable(true);
     connect(arcAction, &QAction::triggered, [this]() {
-        m_scene->setCurrentTool(PetriNetScene::ToolArc);
+        _scene->setCurrentTool(PetriNetScene::ToolArc);
     });
 
     QActionGroup *toolGroup = new QActionGroup(this);
@@ -72,23 +74,23 @@ void MainWindow::createToolBar()
 void MainWindow::createDockWidgets()
 {
     // Панель свойств
-    m_propertyDock = new QDockWidget("Properties", this);
-    m_propertyEditor = new QTreeWidget(m_propertyDock);
-    m_propertyDock->setWidget(m_propertyEditor);
-    addDockWidget(Qt::RightDockWidgetArea, m_propertyDock);
+    _propertyDock = new QDockWidget("Properties", this);
+    _propertyEditor = new QTreeWidget(_propertyDock);
+    _propertyDock->setWidget(_propertyEditor);
+    addDockWidget(Qt::RightDockWidgetArea, _propertyDock);
 
     // Панель моделирования
-    // m_simulationDock = new QDockWidget("Simulation", this);
-    // m_simulationWidget = new SimulationWidget(m_simulationDock);
-    // m_simulationDock->setWidget(m_simulationWidget);
-    // addDockWidget(Qt::LeftDockWidgetArea, m_simulationDock);
+    // _simulationDock = new QDockWidget("Simulation", this);
+    // _simulationWidget = new SimulationWidget(_simulationDock);
+    // _simulationDock->setWidget(_simulationWidget);
+    // addDockWidget(Qt::LeftDockWidgetArea, _simulationDock);
 }
 
 void MainWindow::createMenus()
 {
     QMenu *fileMenu = menuBar()->addMenu("File");
 
-    QAction *newAction = new QAction("New", this);
+    QAction *newAction = new QAction(QIcon(":/icons/Image2.png"), "New", this);
     connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
     fileMenu->addAction(newAction);
 
@@ -96,18 +98,24 @@ void MainWindow::createMenus()
     connect(openAction, &QAction::triggered, this, &MainWindow::openFile);
     fileMenu->addAction(openAction);
 
-    QAction *saveAction = new QAction("Save", this);
+    QAction *saveAction = new QAction(QIcon(":/icons/Image2.png"), "Save", this);
     connect(saveAction, &QAction::triggered, this, &MainWindow::saveFile);
     fileMenu->addAction(saveAction);
 
     QAction *exportAction = new QAction("Export to JSON...", this);
     connect(exportAction, &QAction::triggered, this, &MainWindow::exportToJson);
     fileMenu->addAction(exportAction);
+
+    QMenu *simMenu = menuBar()->addMenu("Simulation");
+
+    QAction *startAction = new QAction(QIcon(":/icons/Image2.png"), "Switch editing/simulation", this);
+    connect(startAction, &QAction::triggered, this, &MainWindow::onSimStart);
+    simMenu->addAction(startAction);
 }
 
 void MainWindow::newFile()
 {
-    m_scene->clear();
+    _scene->clear();
     statusBar()->showMessage("New file created", 2000);
 }
 
@@ -129,8 +137,8 @@ void MainWindow::openFile()
         return;
     }
 
-    m_scene->clear();
-    //m_scene->fromJson(doc.object());
+    _scene->clear();
+    //_scene->fromJson(doc.object());
     statusBar()->showMessage("File loaded", 2000);
 }
 
@@ -144,7 +152,7 @@ void MainWindow::exportToJson()
     // QString fileName = QFileDialog::getSaveFileName(this, "Export to JSON", "", "JSON Files (*.json)");
     // if (fileName.isEmpty()) return;
 
-    // QJsonDocument doc(m_scene->toJson());
+    // QJsonDocument doc(_scene->toJson());
     // QFile file(fileName);
     // if (file.open(QIODevice::WriteOnly)) {
     //     file.write(doc.toJson());
@@ -156,15 +164,46 @@ void MainWindow::exportToJson()
 
 void MainWindow::onPlaceAdded(PetriPlace *place)
 {
-    // Обновляем список позиций и свойства
+    PetriPlace* tmp = new PetriPlace(nullptr, place->label());
+    tmp->setPos(place->pos());
+    tmp->setTokens(place->tokens());
+    _simScene->addItem(tmp);
 }
 
 void MainWindow::onTransitionAdded(PetriTransition *transition)
 {
-    // Обновляем список переходов и свойства
+    PetriTransition *tmp = new PetriTransition(nullptr);
+    tmp->setPos(transition->pos());
+    _simScene->addItem(tmp);
 }
 
 void MainWindow::onArcAdded(PetriArc *arc)
 {
-    // Обновляем список дуг
+    const PetriPlace* place = arc->getPlace();
+    PetriPlace* tmpPlace = new PetriPlace(nullptr, place->label());
+    tmpPlace->setPos(place->pos());
+    tmpPlace->setTokens(place->tokens());
+    _simScene->addItem(tmpPlace);
+
+    const PetriTransition* transition = arc->getTransition();
+    PetriTransition *tmpTransition = new PetriTransition(nullptr);
+    tmpTransition->setPos(transition->pos());
+    _simScene->addItem(tmpTransition);
+
+    PetriArc *tmpArc = new PetriArc(tmpPlace, tmpTransition, arc->isFromPlace(), 0);
+    tmpArc->setPos(arc->pos());
+    _simScene->addItem(tmpArc);
+}
+
+void MainWindow::onSimStart()
+{
+    if(!_isSim)
+    {
+        _view->setScene(_simScene);
+    }
+    else
+    {
+        _view->setScene(_scene);
+    }
+    _isSim = !_isSim;
 }

@@ -146,10 +146,18 @@ public:
      */
     void onArcAdded(PetriArc *arc);
 
-    PetriNetScene* m_scene;
-    QGraphicsView* m_view;
+    /**
+     * @brief ќбработчик перехода в режим симул€ции
+     */
+    void onSimStart();
 
-    QDockWidget* m_propertyDock;
-    QTreeWidget* m_propertyEditor;
+    PetriNetScene* _scene;
+    PetriNetScene* _simScene;
+    QGraphicsView* _view;
+
+    QDockWidget* _propertyDock;
+    QTreeWidget* _propertyEditor;
+
+    bool _isSim{false};
 };
 #endif // MAINWINDOW_H

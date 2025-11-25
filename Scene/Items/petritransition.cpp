@@ -6,9 +6,9 @@
 
 PetriTransition::PetriTransition(QGraphicsItem *parent)
     : QGraphicsRectItem(-10, -40, 20, 80, parent),
-    m_firingTime(0),
-    m_priority(0),
-    m_label("t0")
+    _firingTime(0),
+    _priority(0),
+    _label("t0")
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -23,25 +23,25 @@ void PetriTransition::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     QGraphicsRectItem::paint(painter, option, widget);
 
     // Рисуем временные параметры
-    if (m_firingTime > 0) {
+    if (_firingTime > 0) {
         painter->setFont(QFont("Arial", 7));
-        QString timeText = QString::number(m_firingTime);
-        if (m_timeInterval.first > 0 || m_timeInterval.second < std::numeric_limits<double>::max()) {
-            timeText += QString(" [%1,%2]").arg(m_timeInterval.first).arg(m_timeInterval.second);
+        QString timeText = QString::number(_firingTime);
+        if (_timeInterval.first > 0 || _timeInterval.second < std::numeric_limits<double>::max()) {
+            timeText += QString(" [%1,%2]").arg(_timeInterval.first).arg(_timeInterval.second);
         }
         painter->drawText(QRectF(-15, -20, 30, 15), Qt::AlignCenter, timeText);
     }
 
     // Рисуем приоритет
-    if (m_priority > 0) {
+    if (_priority > 0) {
         painter->setFont(QFont("Arial", 8, QFont::Bold));
-        painter->drawText(QRectF(-15, 5, 30, 15), Qt::AlignCenter, QString::number(m_priority));
+        painter->drawText(QRectF(-15, 5, 30, 15), Qt::AlignCenter, QString::number(_priority));
     }
 
     // Рисуем метку
     painter->setFont(QFont("Arial", 8));
     QRectF labelRect(-15, -40, 30, 10);
-    painter->drawText(labelRect, Qt::AlignCenter, m_label);
+    painter->drawText(labelRect, Qt::AlignCenter, _label);
 }
 
 
