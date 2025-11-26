@@ -8,7 +8,9 @@ PetriArc::PetriArc(PetriPlace *place, PetriTransition *transition, bool fromPlac
     _fromPlace(fromPlace),
     _weight(weight)
 {
-    setPen(QPen(Qt::black, 2));
+    QColor textColor = QPalette().color(QPalette::Text);
+    setPen(QPen(textColor, 2));
+
     updatePosition();
 
     QObject::connect(place, &PetriPlace::positionChanged, this, &PetriArc::updatePosition);
