@@ -156,6 +156,13 @@ public:
     void enterSimulationMode();
 
     void onMarkingChanged(const QVector<int>& tokens);
+    /**
+     * @brief Обработчик завершения симуляции сети Петри
+     *
+     * @details Вызывается после окончания процесса симуляции.
+     * Может использоваться для обновления интерфейса, отображения результатов
+     * или сброса состояния элементов, связанных с симуляцией.
+     */
     void onSimulationFinished();
 
     PetriNetScene* _scene;
