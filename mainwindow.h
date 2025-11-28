@@ -155,7 +155,6 @@ public:
      */
     void enterSimulationMode();
 
-    void onMarkingChanged(const QVector<int>& tokens);
     /**
      * @brief Обработчик завершения симуляции сети Петри
      *
