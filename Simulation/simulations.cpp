@@ -33,8 +33,14 @@ void Simulations::start()
 
     if (_settings.stepTimeMs == 0) {
         // Мгновенное выполнение
+        int processEventsCounter = 0;
         while (_running) {
-            QCoreApplication::processEvents();
+            // Process events every 100 iterations to maintain UI responsiveness
+            // without impacting performance significantly
+            if (++processEventsCounter >= 100) {
+                processEventsCounter = 0;
+                QCoreApplication::processEvents();
+            }
             step();
             if (!_settings.infinite && _currentIteration >= _settings.iterations) {
                 stop();
