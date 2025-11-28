@@ -165,6 +165,8 @@ public:
      *
      * @param tokens Вектор с количеством токенов в каждой позиции сети
      */
+    void onMarkingChanged(const QVector<int>& tokens);
+
     /**
      * @brief Обработчик завершения симуляции сети Петри
      *
@@ -184,6 +186,7 @@ public:
     QDockWidget* _simulationDock;
     SimulationPanel* _simulationPanel;
 
+    Simulations* _simulation{nullptr};
 
     bool _isSim{false};
 };
