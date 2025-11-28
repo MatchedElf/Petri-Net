@@ -68,7 +68,16 @@ public slots:
     */
     void updatePosition();
 
+    /**
+     * @brief Получить вес дуги
+     * @return Значение веса дуги
+     */
     int weight() const { return _weight; }
+
+    /**
+     * @brief Установить вес дуги
+     * @param w Новое значение веса дуги
+     */
     void setWeight(int w) { _weight = w; update(); }
 
 private:
