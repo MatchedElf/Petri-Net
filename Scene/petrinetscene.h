@@ -20,6 +20,8 @@
 #include "Items/petritransition.h"
 #include "Items/petriarc.h"
 
+#include "Simulation/simulations.h"
+
  /**
   * @class PetriNetScene
   * @brief Графическая сцена для создания и редактирования сетей Петри
@@ -163,6 +165,14 @@ public:
      */
     void setCurrentTool(Tool tool);
 
+    /**
+     * @brief Извлечение данных сети для симуляции
+     * @param places Выходной вектор позиций
+     * @param transitions Выходной вектор переходов
+     */
+    void extractNetData(QVector<SimPlace>& places, QVector<SimTransition>& transitions);
+
+
     bool _gridVisible;
     int _gridSize;
     QColor _gridColor{Qt::lightGray};
@@ -208,5 +218,6 @@ signals:
      */
     void placeAdded(PetriPlace* place);
 };
+
 
 #endif // PETRINETSCENE_H
