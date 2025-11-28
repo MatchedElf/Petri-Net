@@ -3,3 +3,15 @@ build/
 .vs/*
 Doxyfile
 docs/
+
+# Build artifacts
+*.o
+*.so
+*.a
+moc_*.cpp
+moc_*.h
+moc_*.o
+moc_predefs.h
+.qmake.stash
+Makefile
+PetriNet
