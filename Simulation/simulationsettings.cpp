@@ -1,5 +1,3 @@
 #include "simulationsettings.h"
 
-SimulationSettings::SimulationSettings() {
-
-}
+SimulationSettings::SimulationSettings() = default;
