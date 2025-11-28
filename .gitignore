@@ -14,4 +14,4 @@ moc_*.o
 moc_predefs.h
 .qmake.stash
 Makefile
-PetriNet
+PetriNet_codeql_detected_source_root
