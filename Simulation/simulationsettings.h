@@ -5,10 +5,10 @@ class SimulationSettings
 {
 public:
     SimulationSettings();
-    bool infinite;
-    int iterations;
+    bool infinite = false;
+    int iterations = 100;
 
-    int stepTimeMs;
+    int stepTimeMs = 100;
 };
 
 #endif // SIMULATIONSETTINGS_H
