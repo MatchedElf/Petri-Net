@@ -244,7 +244,7 @@ void MainWindow::enterSimulationMode()
     stepLayout->addWidget(instantCheck);
     mainLayout->addLayout(stepLayout);
 
-    QObject::connect(instantCheck, &QCheckBox::toggled, [&](bool checked){
+    QObject::connect(instantCheck, &QCheckBox::toggled, [stepEdit](bool checked){
         stepEdit->setEnabled(!checked);
     });
 
