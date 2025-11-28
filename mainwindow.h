@@ -174,7 +174,6 @@ public:
     QDockWidget* _simulationDock;
     SimulationPanel* _simulationPanel;
 
-    Simulations* _simulation{nullptr};
 
     bool _isSim{false};
 };
