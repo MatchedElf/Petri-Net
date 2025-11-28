@@ -2,6 +2,7 @@
 
 #include "petriplace.h"
 #include "qpainter.h"
+#include <cmath>
 
 
 PetriPlace::PetriPlace(QGraphicsItem *parent, QString label)

@@ -11,19 +11,25 @@ DEFINES += PROJECT_PATH=\"\\\"$${_PRO_FILE_PWD_}/\\\"\"
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Simulation/simulations.cpp \
+    Simulation/simulationsettings.cpp \
     main.cpp \
     mainwindow.cpp \
     Scene/Items/petriarc.cpp \
     Scene/petrinetscene.cpp \
     Scene/Items/petriplace.cpp \
-    Scene/Items/petritransition.cpp
+    Scene/Items/petritransition.cpp \
+    Widgets/simulationpanel.cpp \
 
 HEADERS += \
+    Simulation/simulations.h \
+    Simulation/simulationsettings.h \
     mainwindow.h \
     Scene/Items/petriarc.h \
     Scene/petrinetscene.h \
     Scene/Items/petriplace.h \
-    Scene/Items/petritransition.h
+    Scene/Items/petritransition.h \
+    Widgets/simulationpanel.h \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
