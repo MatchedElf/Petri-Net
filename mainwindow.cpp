@@ -2,10 +2,10 @@
 #include "mainwindow.h"
 #include "Simulation/simulationsettings.h"
 #include "Widgets/simulationpanel.h"
-#include "qboxlayout.h"
-#include "qlabel.h"
-#include "qlineedit.h"
-#include "qpushbutton.h"
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 #include <QApplication>
 #include <QCheckBox>
 
