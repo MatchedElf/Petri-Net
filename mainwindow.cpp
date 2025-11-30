@@ -1,6 +1,13 @@
 // mainwindow.cpp
 #include "mainwindow.h"
+#include "Simulation/simulationsettings.h"
+#include "Widgets/simulationpanel.h"
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 #include <QApplication>
+#include <QCheckBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -79,11 +86,17 @@ void MainWindow::createDockWidgets()
     _propertyDock->setWidget(_propertyEditor);
     addDockWidget(Qt::RightDockWidgetArea, _propertyDock);
 
-    // Панель моделирования
-    // _simulationDock = new QDockWidget("Simulation", this);
-    // _simulationWidget = new SimulationWidget(_simulationDock);
-    // _simulationDock->setWidget(_simulationWidget);
-    // addDockWidget(Qt::LeftDockWidgetArea, _simulationDock);
+    // Панель симуляции (изначально скрыта)
+    _simulationDock = new QDockWidget("Симуляция", this);
+    _simulationPanel = new SimulationPanel(_simulationDock);
+    _simulationPanel->setScene(_scene);
+    _simulationDock->setWidget(_simulationPanel);
+    addDockWidget(Qt::RightDockWidgetArea, _simulationDock);
+    _simulationDock->hide(); // Скрываем по умолчанию
+    
+    // Подключаем сигнал завершения симуляции
+    connect(_simulationPanel, &SimulationPanel::simulationFinished, 
+            this, &MainWindow::onSimulationFinished);
 }
 
 void MainWindow::createMenus()
@@ -108,8 +121,8 @@ void MainWindow::createMenus()
 
     QMenu *simMenu = menuBar()->addMenu("Simulation");
 
-    QAction *startAction = new QAction(QIcon(":/icons/Image2.png"), "Switch editing/simulation", this);
-    connect(startAction, &QAction::triggered, this, &MainWindow::onSimStart);
+    QAction *startAction = new QAction(QIcon(":/icons/Image2.png"), "Run simulation", this);
+    connect(startAction, &QAction::triggered, this, &MainWindow::enterSimulationMode);
     simMenu->addAction(startAction);
 }
 
@@ -195,15 +208,90 @@ void MainWindow::onArcAdded(PetriArc *arc)
     _simScene->addItem(tmpArc);
 }
 
-void MainWindow::onSimStart()
+void MainWindow::enterSimulationMode()
 {
-    if(!_isSim)
+    QDialog dialog;
+    dialog.setWindowTitle("Настройки симуляции сети Петри");
+    dialog.resize(350, 250);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+
+    // ======== Количество итераций ==========
+    QHBoxLayout *iterLayout = new QHBoxLayout();
+    QLabel *iterLabel = new QLabel("Количество итераций:");
+    QLineEdit *iterEdit = new QLineEdit("100");
+    QIntValidator *iterVld = new QIntValidator(1, 1000000, iterEdit);
+    iterEdit->setValidator(iterVld);
+    QCheckBox *infiniteCheck = new QCheckBox("Бесконечно");
+    iterLayout->addWidget(iterLabel);
+    iterLayout->addWidget(iterEdit);
+    iterLayout->addWidget(infiniteCheck);
+    mainLayout->addLayout(iterLayout);
+
+    QObject::connect(infiniteCheck, &QCheckBox::toggled, [&](bool checked){
+        iterEdit->setEnabled(!checked);
+    });
+
+    // ======== Время шага ==========
+    QHBoxLayout *stepLayout = new QHBoxLayout();
+    QLabel *stepLabel = new QLabel("Время одного шага (мс):");
+    QLineEdit *stepEdit = new QLineEdit("100");
+    QIntValidator *timeVld = new QIntValidator(0, 100000, stepEdit);
+    stepEdit->setValidator(timeVld);
+    QCheckBox *instantCheck = new QCheckBox("Мгновенно");
+    stepLayout->addWidget(stepLabel);
+    stepLayout->addWidget(stepEdit);
+    stepLayout->addWidget(instantCheck);
+    mainLayout->addLayout(stepLayout);
+
+    QObject::connect(instantCheck, &QCheckBox::toggled, [stepEdit](bool checked){
+        stepEdit->setEnabled(!checked);
+    });
+
+    // ======== Кнопки ==========
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *okButton = new QPushButton("Запуск");
+    QPushButton *cancelButton = new QPushButton("Отмена");
+    buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
+    mainLayout->addLayout(buttonLayout);
+
+    QObject::connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    QObject::connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    // ======== Показываем диалог ==========
+    if (dialog.exec() == QDialog::Accepted)
     {
-        _view->setScene(_simScene);
+        SimulationSettings settings;
+        settings.infinite = infiniteCheck->isChecked();
+        settings.iterations = settings.infinite ? -1 : iterEdit->text().toInt();
+        settings.stepTimeMs = instantCheck->isChecked() ? 0 : stepEdit->text().toInt();
+
+        // Показываем панель симуляции и передаём настройки
+        _simulationDock->show();
+        _simulationPanel->setSettings(settings);
+        _simulationPanel->startSimulation();
+
+        statusBar()->showMessage("Симуляция запущена", 2000);
     }
-    else
-    {
-        _view->setScene(_scene);
+}
+
+void MainWindow::onMarkingChanged(const QVector<int>& tokens)
+{
+    // Обновляем отображение фишек на сцене
+    int i = 0;
+    for (QGraphicsItem* item : _scene->items()) {
+        if (PetriPlace* place = dynamic_cast<PetriPlace*>(item)) {
+            if (i < tokens.size()) {
+                place->setTokens(tokens[i]);
+                i++;
+            }
+        }
     }
-    _isSim = !_isSim;
+    _scene->update();
+}
+
+void MainWindow::onSimulationFinished()
+{
+    statusBar()->showMessage("Симуляция завершена", 2000);
 }

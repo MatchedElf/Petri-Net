@@ -242,3 +242,58 @@ void PetriNetScene::onTokensEdit(PetriPlace* item)
     }
 
 }
+
+void PetriNetScene::extractNetData(QVector<SimPlace>& places, QVector<SimTransition>& transitions)
+{
+    places.clear();
+    transitions.clear();
+
+    QMap<PetriPlace*, int> placeIndexMap;
+    QMap<PetriTransition*, int> transitionIndexMap;
+
+    // Собираем все позиции
+    for (QGraphicsItem* item : items()) {
+        if (PetriPlace* place = dynamic_cast<PetriPlace*>(item)) {
+            SimPlace sp;
+            sp.id = place->label();
+            sp.tokens = place->tokens();
+            placeIndexMap[place] = places.size();
+            places.append(sp);
+        }
+    }
+
+    // Собираем все переходы
+    for (QGraphicsItem* item : items()) {
+        if (PetriTransition* transition = dynamic_cast<PetriTransition*>(item)) {
+            transitionIndexMap[transition] = transitions.size();
+            SimTransition st;
+            st.id = "t" + QString::number(transitions.size());
+            transitions.append(st);
+        }
+    }
+
+    // Собираем дуги и связываем с переходами
+    for (QGraphicsItem* item : items()) {
+        if (PetriArc* arc = dynamic_cast<PetriArc*>(item)) {
+            const PetriPlace* place = arc->getPlace();
+            const PetriTransition* transition = arc->getTransition();
+
+            int placeIdx = placeIndexMap.value(const_cast<PetriPlace*>(place), -1);
+            int transIdx = transitionIndexMap.value(const_cast<PetriTransition*>(transition), -1);
+
+            if (placeIdx == -1 || transIdx == -1) continue;
+
+            SimTransition& st = transitions[transIdx];
+
+            if (arc->isFromPlace()) {
+                // Входная дуга (Place -> Transition)
+                st.inputPlaces.append(placeIdx);
+                st.inputWeights.append(arc->weight());
+            } else {
+                // Выходная дуга (Transition -> Place)
+                st.outputPlaces.append(placeIdx);
+                st.outputWeights.append(arc->weight());
+            }
+        }
+    }
+}
