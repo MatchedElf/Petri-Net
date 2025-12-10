@@ -184,6 +184,7 @@ public:
     QGraphicsLineItem* tempLine;
 
     int placesCount{0};
+    int transitionsCount{0};
 
 protected slots:
 
@@ -198,6 +199,8 @@ protected slots:
      * @note Использует QIntValidator с диапазоном 0-10 для ограничения ввода
      */
     void onTokensEdit(PetriPlace* item);
+
+    void onWeightEdit(PetriArc* item);
 
 signals:
     /**

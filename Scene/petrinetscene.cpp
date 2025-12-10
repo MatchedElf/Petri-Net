@@ -117,8 +117,7 @@ void PetriNetScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void PetriNetScene::addPlace(const QPointF &pos)
 {
-    PetriPlace *place = new PetriPlace(nullptr, "p" + QString::number(placesCount));
-    placesCount++;
+    PetriPlace *place = new PetriPlace(nullptr, "p" + QString::number(placesCount++));
     place->setPos(pos);
     addItem(place);
     emit placeAdded(place);
@@ -126,7 +125,7 @@ void PetriNetScene::addPlace(const QPointF &pos)
 
 void PetriNetScene::addTransition(const QPointF &pos)
 {
-    PetriTransition *transition = new PetriTransition(nullptr);
+    PetriTransition *transition = new PetriTransition(nullptr, "t" + QString::number(transitionsCount++));
     transition->setPos(pos);
     addItem(transition);
     emit transitionAdded(transition);
@@ -166,8 +165,8 @@ void PetriNetScene::showContextMenu(const QPointF &pos, QGraphicsItem* item)
         //TODO
         //Сделать аналогично изменению фишек(tokens) у мест(place) изменение веса(weight) у стрелок(arc)
         action2 = contextMenu.addAction("Изменить количество стрелок");
-        connect(action2, &QAction::triggered, this, [place, this](){
-            onTokensEdit(place);
+        connect(action2, &QAction::triggered, this, [arc, this](){
+            onWeightEdit(arc);
         });
     }
     contextMenu.addSeparator();
@@ -241,6 +240,45 @@ void PetriNetScene::onTokensEdit(PetriPlace* item)
         update();
     }
 
+}
+
+void PetriNetScene::onWeightEdit(PetriArc *item)
+{
+    QDialog dialog;
+    dialog.setWindowTitle("Ввод данных");
+    dialog.resize(100, 70);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+
+    // Поле для целых чисел
+    QLabel *intLabel = new QLabel("Новый вес стрелки: ");
+    QLineEdit *intEdit = new QLineEdit();
+    QIntValidator* intVld = new QIntValidator(intEdit);
+    intVld->setRange(0, 10);
+    intEdit->setValidator(intVld);
+    intEdit->setText(QString::number(item->weight()));
+    mainLayout->addWidget(intLabel);
+    mainLayout->addWidget(intEdit);
+
+
+    // Кнопки
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    QPushButton *okButton = new QPushButton("OK");
+    QPushButton *cancelButton = new QPushButton("Отмена");
+    buttonLayout->addWidget(okButton);
+    buttonLayout->addWidget(cancelButton);
+    mainLayout->addLayout(buttonLayout);
+
+    // Обработчики
+    QObject::connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    QObject::connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    // Показываем диалог
+    if (dialog.exec() == QDialog::Accepted) {
+        int newWeight = intEdit->text().toInt();
+        item->setWeight(newWeight);
+        update();
+    }
 }
 
 void PetriNetScene::extractNetData(QVector<SimPlace>& places, QVector<SimTransition>& transitions)

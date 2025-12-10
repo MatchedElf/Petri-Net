@@ -58,6 +58,13 @@ public:
 
     bool isFromPlace();
 
+    /**
+    * @brief Обработчик двойного клика
+    * @param event Событие мыши
+    */
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
+
 public slots:
     /**
     * @brief Обновление позиции дуги при перемещении связанных элементов

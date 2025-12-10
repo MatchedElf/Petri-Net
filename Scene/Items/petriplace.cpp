@@ -46,6 +46,7 @@ void PetriPlace::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
 
     // Рисуем метку
+    painter->setBrush(Qt::white);
     painter->setFont(QFont("Arial", 10));
     QRectF labelRect(-20, -30, 40, 10);
     painter->drawText(labelRect, Qt::AlignCenter, _label);

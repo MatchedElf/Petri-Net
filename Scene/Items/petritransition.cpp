@@ -4,11 +4,11 @@
 #include "qpainter.h"
 
 
-PetriTransition::PetriTransition(QGraphicsItem *parent)
+PetriTransition::PetriTransition(QGraphicsItem *parent, QString label = QString(""))
     : QGraphicsRectItem(-10, -40, 20, 80, parent),
     _firingTime(0),
     _priority(0),
-    _label("t0")
+    _label(label)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -21,7 +21,6 @@ PetriTransition::PetriTransition(QGraphicsItem *parent)
 void PetriTransition::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QGraphicsRectItem::paint(painter, option, widget);
-
     // Рисуем временные параметры
     if (_firingTime > 0) {
         painter->setFont(QFont("Arial", 7));
@@ -39,8 +38,8 @@ void PetriTransition::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     }
 
     // Рисуем метку
-    painter->setFont(QFont("Arial", 8));
-    QRectF labelRect(-15, -40, 30, 10);
+    painter->setFont(QFont("Arial", 10));
+    QRectF labelRect(-20, -30, 40, 10);
     painter->drawText(labelRect, Qt::AlignCenter, _label);
 }
 
@@ -61,4 +60,9 @@ void PetriTransition::addPlace(PetriPlace * place, bool from)
         _fromPlacesList.append(place);
     else
         _toPlacesList.append(place);
+}
+
+QString PetriTransition::label() const
+{
+    return _label;
 }

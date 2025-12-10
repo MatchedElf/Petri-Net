@@ -70,8 +70,8 @@ void PetriArc::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setBrush(pen().color());
     painter->drawPolygon(QPolygonF() << intersectEnd << arrowP1 << arrowP2);
     // Рисуем вес если > 1
-    if (_weight > 1) {
-        painter->setFont(QFont("Arial", 8));
+    if (_weight > -1) {
+        painter->setFont(QFont("Arial", 10));
         QPointF textPos = (intersectStart + intersectEnd) / 2;
         painter->drawText(textPos, QString::number(_weight));
     }
@@ -90,6 +90,12 @@ const PetriTransition *PetriArc::getTransition()
 bool PetriArc::isFromPlace()
 {
     return _fromPlace;
+}
+
+void PetriArc::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    _weight++;
+    update();
 }
 
 QPointF PetriArc::calculateIntersection(const QPointF &point1, const QPointF &point2, const QGraphicsItem *item)

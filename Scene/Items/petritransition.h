@@ -32,7 +32,7 @@ public:
      * с центром в точке (0,0). Устанавливает начальные свойства и флаги взаимодействия.
      * @param parent Родительский графический элемент
      */
-    explicit PetriTransition(QGraphicsItem *parent);
+    explicit PetriTransition(QGraphicsItem *parent, QString label);
 
     /**
      * @brief Отрисовка перехода на графической сцене
@@ -67,6 +67,12 @@ public:
      * @param from Направление связи: true - входная позиция, false - выходная позиция
      */
     void addPlace(PetriPlace*, bool from);
+
+    /**
+    * @brief Получение текстовой метки перехода
+    * @return Текстовая метка перехода
+    */
+    QString label() const;
 signals:
     /**
     * @brief Сигнал об изменении позиции элемента на сцене

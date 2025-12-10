@@ -185,7 +185,7 @@ void MainWindow::onPlaceAdded(PetriPlace *place)
 
 void MainWindow::onTransitionAdded(PetriTransition *transition)
 {
-    PetriTransition *tmp = new PetriTransition(nullptr);
+    PetriTransition *tmp = new PetriTransition(nullptr, transition->label());
     tmp->setPos(transition->pos());
     _simScene->addItem(tmp);
 }
@@ -199,7 +199,7 @@ void MainWindow::onArcAdded(PetriArc *arc)
     _simScene->addItem(tmpPlace);
 
     const PetriTransition* transition = arc->getTransition();
-    PetriTransition *tmpTransition = new PetriTransition(nullptr);
+    PetriTransition *tmpTransition = new PetriTransition(nullptr, transition->label());
     tmpTransition->setPos(transition->pos());
     _simScene->addItem(tmpTransition);
 
