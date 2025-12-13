@@ -55,15 +55,15 @@ void MainWindow::createToolBar()
     selectAction->setChecked(true);
     connect(selectAction, &QAction::triggered, [this]() { _scene->setCurrentTool(PetriNetScene::ToolSelect); });
 
-    QAction *placeAction = new QAction(QIcon(":/icons/place.png"), "Place", this);
+    QAction *placeAction = new QAction(QIcon(iconsDir + "place.png"), "Place", this);
     placeAction->setCheckable(true);
     connect(placeAction, &QAction::triggered, [this]() { _scene->setCurrentTool(PetriNetScene::ToolPlace); });
 
-    QAction *transitionAction = new QAction(QIcon(":/icons/transition.png"), "Transition", this);
+    QAction *transitionAction = new QAction(QIcon(iconsDir + "transition.png"), "Transition", this);
     transitionAction->setCheckable(true);
     connect(transitionAction, &QAction::triggered, [this]() { _scene->setCurrentTool(PetriNetScene::ToolTransition); });
 
-    QAction* arcAction = new QAction(QIcon(":/icons/arc.png"), "Arc", this);
+    QAction* arcAction = new QAction(QIcon(iconsDir + "arc.png"), "Arc", this);
     arcAction->setCheckable(true);
     connect(arcAction, &QAction::triggered, [this]() {
         _scene->setCurrentTool(PetriNetScene::ToolArc);
@@ -80,6 +80,8 @@ void MainWindow::createToolBar()
 
 void MainWindow::createDockWidgets()
 {
+
+
     // Панель свойств
     _propertyDock = new QDockWidget("Properties", this);
     _propertyEditor = new QTreeWidget(_propertyDock);
@@ -101,7 +103,10 @@ void MainWindow::createDockWidgets()
 
 void MainWindow::createMenus()
 {
-    QMenu *fileMenu = menuBar()->addMenu("File");
+    QToolBar *toolBar = addToolBar("Tools");
+    QString iconsDir = QString(PROJECT_PATH) + "icons/";
+
+    QMenu *fileMenu = menuBar()->addMenu(QIcon(iconsDir + "file.png"), "File");
 
     QAction *newAction = new QAction(QIcon(":/icons/Image2.png"), "New", this);
     connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
