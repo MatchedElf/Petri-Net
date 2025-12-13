@@ -22,6 +22,7 @@ void PetriTransition::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 {
     QGraphicsRectItem::paint(painter, option, widget);
     // Рисуем временные параметры
+    painter->setPen(QPen(Qt::white));
     if (_firingTime > 0) {
         painter->setFont(QFont("Arial", 7));
         QString timeText = QString::number(_firingTime);
